@@ -1,0 +1,30 @@
+{
+  "name": "spending-tracker",
+  "version": "1.0.0",
+  "main": "App.tsx",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios"
+  },
+  "dependencies": {
+    "@expo/ngrok": "^4.1.3",
+    "@expo/vector-icons": "latest",
+    "@react-navigation/bottom-tabs": "latest",
+    "@react-navigation/native": "latest",
+    "axios": "latest",
+    "expo": "latest",
+    "expo-sqlite": "latest",
+    "expo-status-bar": "latest",
+    "react": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-paper": "latest",
+    "react-native-safe-area-context": "~5.7.0",
+    "react-native-screens": "~4.26.0"
+  },
+  "devDependencies": {
+    "@babel/core": "latest",
+    "@types/react": "~19.2.4",
+    "typescript": "~6.0.3"
+  }
+}

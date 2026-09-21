@@ -1,0 +1,19 @@
+# Python backend
+backend/.venv/
+backend/venv/
+**/__pycache__/
+**/*.pyc
+backend/spending.db
+
+# Mobile
+mobile/node_modules/
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+
+# General
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
