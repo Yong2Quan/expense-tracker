@@ -102,7 +102,10 @@ backend/
   routers/             categories.py, expenses.py
   seed.py              inserts the six default categories
   tests/               pytest suite
+assets/
+  mascot.svg           Penny — source art for the README and the app icons
 mobile/
+  assets/              icon.png, adaptive-icon.png, favicon.png (generated from mascot.svg)
   index.js             entry point — installs the URL polyfill, then mounts App
   App.tsx              bottom-tab navigation + theme wiring
   src/theme.ts         colours, spacing, radii — the validated category palette
