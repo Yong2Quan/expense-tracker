@@ -1,27 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { Button, Divider, IconButton, List, Text, TextInput, Title } from "react-native-paper";
+import React, { useCallback, useState } from "react";
+import { Alert, Pressable, ScrollView, StyleSheet, View } from "react-native";
+import { Button, IconButton, Text, TextInput } from "react-native-paper";
+import { useFocusEffect } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { createCategory, deleteCategory, getCategories } from "../db/local";
+import { createCategory, deleteCategory, getCategories } from "../api/categories";
+import { useTabContentPadding } from "../hooks/useBottomSpace";
+import CategoryAvatar from "../components/CategoryAvatar";
+import { EmptyState, ErrorNotice, Loading } from "../components/Status";
+import { CATEGORY_COLOURS, palette, radius, spacing } from "../theme";
 import type { Category } from "../types";
-
-const PRESET_COLOURS = [
-  "#6366F1", "#F59E0B", "#3B82F6", "#EC4899",
-  "#8B5CF6", "#10B981", "#EF4444", "#F97316",
-  "#14B8A6", "#64748B",
-];
 
 export default function SettingsScreen(): React.JSX.Element {
   const [categories, setCategories] = useState<Category[]>([]);
   const [newName, setNewName] = useState("");
-  const [newColour, setNewColour] = useState(PRESET_COLOURS[0]);
+  const [newColour, setNewColour] = useState<string>(CATEGORY_COLOURS[0]);
   const [error, setError] = useState("");
+  const [loadError, setLoadError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const bottomPadding = useTabContentPadding();
 
-  const refresh = (): void => setCategories(getCategories());
-
-  useEffect(() => {
-    refresh();
+  const refresh = useCallback(async () => {
+    setLoading(true);
+    setLoadError("");
+    try {
+      setCategories(await getCategories());
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to load categories.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void refresh();
+    }, [refresh]),
+  );
 
   const handleAdd = (): void => {
     const trimmed = newName.trim();
@@ -29,19 +45,25 @@ export default function SettingsScreen(): React.JSX.Element {
       setError("Category name cannot be empty.");
       return;
     }
-    const exists = categories.some(
-      (c) => c.name.toLowerCase() === trimmed.toLowerCase(),
-    );
-    if (exists) {
+    if (categories.some((c) => c.name.toLowerCase() === trimmed.toLowerCase())) {
       setError("A category with that name already exists.");
       return;
     }
 
-    createCategory({ name: trimmed, colour: newColour });
-    setNewName("");
-    setNewColour(PRESET_COLOURS[0]);
-    setError("");
-    refresh();
+    void (async () => {
+      setSaving(true);
+      try {
+        await createCategory({ name: trimmed, colour: newColour });
+        setNewName("");
+        setNewColour(CATEGORY_COLOURS[0]);
+        setError("");
+        await refresh();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Could not create category.");
+      } finally {
+        setSaving(false);
+      }
+    })();
   };
 
   const handleDelete = (cat: Category): void => {
@@ -54,104 +76,178 @@ export default function SettingsScreen(): React.JSX.Element {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            deleteCategory(cat.id);
-            refresh();
+            void (async () => {
+              try {
+                await deleteCategory(cat.id);
+                await refresh();
+              } catch (err) {
+                Alert.alert("Delete failed", err instanceof Error ? err.message : "Unknown error");
+              }
+            })();
           },
         },
       ],
     );
   };
 
+  if (loading) return <Loading />;
+  if (loadError) return <ErrorNotice message={loadError} onRetry={() => void refresh()} />;
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* ── Add category ───────────────────────────────────────── */}
-      <Title>Add Category</Title>
+    <ScrollView
+      style={styles.page}
+      contentContainerStyle={[styles.content, { paddingBottom: bottomPadding }]}
+      keyboardShouldPersistTaps="handled"
+    >
+      {/* ── New category, with a live preview of how it will look ── */}
+      <Text style={styles.sectionHeading}>New category</Text>
 
-      <TextInput
-        mode="outlined"
-        label="Name"
-        value={newName}
-        onChangeText={(v) => { setNewName(v); setError(""); }}
-        style={styles.input}
-      />
+      <View style={styles.card}>
+        <View style={styles.previewRow}>
+          <CategoryAvatar name={newName || "tag"} colour={newColour} size={48} />
+          <View style={styles.previewText}>
+            <Text style={styles.previewName} numberOfLines={1}>
+              {newName.trim() || "Preview"}
+            </Text>
+            <Text style={styles.previewHint}>
+              The icon is picked from the name
+            </Text>
+          </View>
+        </View>
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+        <TextInput
+          mode="outlined"
+          label="Name"
+          value={newName}
+          onChangeText={(v) => {
+            setNewName(v);
+            setError("");
+          }}
+          placeholder="e.g. Coffee, Rent, Pet"
+          style={styles.input}
+          outlineColor={palette.outline}
+        />
 
-      <Text variant="labelLarge" style={styles.colourLabel}>Colour</Text>
-      <View style={styles.swatchRow}>
-        {PRESET_COLOURS.map((colour) => (
-          <TouchableOpacity
-            key={colour}
-            onPress={() => setNewColour(colour)}
-            style={[
-              styles.swatch,
-              { backgroundColor: colour },
-              newColour === colour && styles.swatchSelected,
-            ]}
-          />
-        ))}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+
+        <Text style={styles.fieldLabel}>Colour</Text>
+        <View style={styles.swatchRow}>
+          {CATEGORY_COLOURS.map((colour) => {
+            const selected = newColour === colour;
+            return (
+              <Pressable
+                key={colour}
+                onPress={() => setNewColour(colour)}
+                style={[styles.swatch, { backgroundColor: colour }, selected && styles.swatchSelected]}
+                accessibilityRole="button"
+                accessibilityState={{ selected }}
+                accessibilityLabel={`Colour ${colour}`}
+              >
+                {selected ? (
+                  <MaterialCommunityIcons name="check" size={18} color="#FFFFFF" />
+                ) : null}
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <Button
+          mode="contained"
+          onPress={handleAdd}
+          loading={saving}
+          disabled={saving}
+          icon="plus"
+          contentStyle={styles.addContent}
+          style={styles.add}
+        >
+          Add Category
+        </Button>
       </View>
 
-      <Button mode="contained" onPress={handleAdd} style={styles.addButton}>
-        Add Category
-      </Button>
-
-      <Divider style={styles.divider} />
-
-      {/* ── Existing categories ─────────────────────────────────── */}
-      <Title>Your Categories</Title>
+      {/* ── Existing ──────────────────────────────────────────────── */}
+      <Text style={styles.sectionHeading}>Your categories</Text>
 
       {categories.length === 0 ? (
-        <Text style={styles.empty}>No categories yet.</Text>
+        <View style={styles.emptyWrap}>
+          <EmptyState icon="shape-outline" title="No categories yet" />
+        </View>
       ) : (
-        categories.map((cat) => (
-          <List.Item
-            key={cat.id}
-            title={cat.name}
-            left={() => (
-              <View style={[styles.dot, { backgroundColor: cat.colour }]} />
-            )}
-            right={() => (
+        <View style={styles.card}>
+          {categories.map((cat, index) => (
+            <View key={cat.id} style={[styles.row, index > 0 && styles.rowDivider]}>
+              <CategoryAvatar name={cat.name} colour={cat.colour} />
+              <Text style={styles.rowTitle} numberOfLines={1}>
+                {cat.name}
+              </Text>
               <IconButton
                 icon="trash-can-outline"
+                size={20}
+                iconColor={palette.textMuted}
+                style={styles.delete}
                 onPress={() => handleDelete(cat)}
               />
-            )}
-          />
-        ))
+            </View>
+          ))}
+        </View>
       )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 8 },
-  input: { marginBottom: 4 },
-  error: { color: "#EF4444", marginBottom: 4 },
-  colourLabel: { marginTop: 8 },
-  swatchRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    marginVertical: 8,
+  page: { flex: 1, backgroundColor: palette.background },
+  content: { padding: spacing.lg, paddingBottom: spacing.xxl, gap: spacing.md },
+
+  sectionHeading: {
+    color: palette.textPrimary,
+    fontSize: 16,
+    fontWeight: "700",
+    marginTop: spacing.xs,
   },
+
+  card: {
+    backgroundColor: palette.surface,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: palette.outline,
+    padding: spacing.md,
+    gap: spacing.md,
+  },
+
+  previewRow: { flexDirection: "row", alignItems: "center", gap: spacing.md },
+  previewText: { flex: 1, gap: 2 },
+  previewName: { color: palette.textPrimary, fontSize: 17, fontWeight: "700" },
+  previewHint: { color: palette.textMuted, fontSize: 12 },
+
+  input: { backgroundColor: palette.surface },
+  error: { color: palette.danger, fontSize: 13, marginTop: -spacing.sm },
+
+  fieldLabel: { color: palette.textSecondary, fontSize: 13, fontWeight: "600" },
+  swatchRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.md },
   swatch: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: radius.pill,
+    alignItems: "center",
+    justifyContent: "center",
   },
   swatchSelected: {
     borderWidth: 3,
-    borderColor: "#1F2937",
+    borderColor: palette.textPrimary,
   },
-  addButton: { marginTop: 8 },
-  divider: { marginVertical: 20 },
-  dot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    alignSelf: "center",
-    marginLeft: 4,
+
+  add: { borderRadius: radius.md },
+  addContent: { paddingVertical: spacing.xs },
+
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.md,
+    paddingVertical: spacing.sm,
   },
-  empty: { color: "#aaa", textAlign: "center", marginTop: 16 },
+  rowDivider: { borderTopWidth: 1, borderTopColor: palette.outline },
+  rowTitle: { flex: 1, color: palette.textPrimary, fontSize: 15, fontWeight: "600" },
+  delete: { margin: 0 },
+
+  emptyWrap: { height: 200 },
 });

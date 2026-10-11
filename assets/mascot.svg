@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-labelledby="title desc">
+  <title id="title">Penny, the expense tracker mascot</title>
+  <desc id="desc">A well-loved yellow plush duck in a pale blue shirt, with soft dark worn eyes and a stitched beak.</desc>
+
+  <defs>
+    <linearGradient id="headShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7EEDA"/>
+      <stop offset="100%" stop-color="#E8D9B7"/>
+    </linearGradient>
+    <linearGradient id="beak" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0CE78"/>
+      <stop offset="100%" stop-color="#D7AF52"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D2E2E5"/>
+      <stop offset="100%" stop-color="#AFC7CE"/>
+    </linearGradient>
+    <linearGradient id="limb" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EBCA72"/>
+      <stop offset="100%" stop-color="#DCB255"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="256" height="256" rx="34" fill="#FBF4E4"/>
+
+  <!-- ears, tucked behind the head -->
+  <ellipse cx="62" cy="68" rx="21" ry="24" fill="#E4D4AE" transform="rotate(-18 62 68)"/>
+  <ellipse cx="194" cy="68" rx="21" ry="24" fill="#E4D4AE" transform="rotate(18 194 68)"/>
+
+  <!-- body, wide enough to meet the arms and tall enough not to clip -->
+  <path d="M62 256 C62 198 88 172 128 172 C168 172 194 198 194 256 Z" fill="url(#shirt)"/>
+
+  <!-- arms, overlapping the body so they read as attached -->
+  <rect x="18" y="178" width="72" height="36" rx="18" fill="url(#limb)" transform="rotate(14 54 196)"/>
+  <rect x="166" y="178" width="72" height="36" rx="18" fill="url(#limb)" transform="rotate(-14 202 196)"/>
+
+  <!-- collar stitching -->
+  <path d="M76 200 C94 190 162 190 180 200" stroke="#97B4BD" stroke-width="2.5"
+        stroke-linecap="round" stroke-dasharray="5 7" fill="none" opacity="0.75"/>
+
+  <!-- head -->
+  <ellipse cx="128" cy="112" rx="85" ry="78" fill="url(#headShade)"/>
+
+  <!-- faint centre seam, straight down the forehead -->
+  <path d="M128 38 C125 54 125 70 128 84" stroke="#DCCBA6" stroke-width="2.5"
+        stroke-linecap="round" fill="none" opacity="0.7"/>
+
+  <!-- eyes: soft worn patches, outer corners dipping so he reads sleepy, not cross -->
+  <g fill="#3B362E">
+    <ellipse cx="94" cy="100" rx="20" ry="13" transform="rotate(-9 94 100)"/>
+    <ellipse cx="162" cy="100" rx="20" ry="13" transform="rotate(9 162 100)"/>
+  </g>
+  <ellipse cx="99" cy="96" rx="4.5" ry="3.2" fill="#7A7367" opacity="0.55"/>
+  <ellipse cx="157" cy="96" rx="4.5" ry="3.2" fill="#7A7367" opacity="0.55"/>
+
+  <!-- beak: gathered fabric with the little worn hole -->
+  <ellipse cx="128" cy="151" rx="41" ry="34" fill="url(#beak)"/>
+  <path d="M99 139 C114 133 142 133 157 139" stroke="#C49744" stroke-width="2"
+        stroke-linecap="round" fill="none" opacity="0.6"/>
+  <path d="M98 164 C114 172 142 172 158 164" stroke="#C49744" stroke-width="2"
+        stroke-linecap="round" fill="none" opacity="0.45"/>
+  <ellipse cx="129" cy="150" rx="11" ry="7.5" fill="#2F2B24" transform="rotate(-8 129 150)"/>
+
+  <!-- loved-in creases at the cheeks -->
+  <path d="M57 130 C63 140 63 150 57 158" stroke="#DCCBA6" stroke-width="2.5"
+        stroke-linecap="round" fill="none" opacity="0.65"/>
+  <path d="M199 130 C193 140 193 150 199 158" stroke="#DCCBA6" stroke-width="2.5"
+        stroke-linecap="round" fill="none" opacity="0.65"/>
+</svg>

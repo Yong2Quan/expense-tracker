@@ -7,30 +7,9 @@
     "updates": {
       "enabled": false
     },
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#6366F1"
-    },
     "ios": {
       "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#6366F1"
-      }
-    },
-    "plugins": [
-      [
-        "expo-sqlite",
-        {
-          "enableFTS": false,
-          "useSQLCipher": false
-        }
-      ]
-    ]
+    }
   }
 }

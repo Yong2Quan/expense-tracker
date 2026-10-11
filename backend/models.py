@@ -11,7 +11,13 @@ class Category(Base):
     name = Column(String, unique=True, nullable=False)
     colour = Column(String, default="#6366F1")
 
-    expenses = relationship("Expense", back_populates="category")
+    # delete-orphan: removing a category removes its expenses, rather than
+    # trying to NULL out expenses.category_id (which is NOT NULL).
+    expenses = relationship(
+        "Expense",
+        back_populates="category",
+        cascade="all, delete-orphan",
+    )
 
 
 class Expense(Base):
