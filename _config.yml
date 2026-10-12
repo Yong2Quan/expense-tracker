@@ -17,7 +17,8 @@ exclude:
   - LICENSE
   - "*.ps1"
 
-# Without this, kramdown treats everything inside <details> as raw HTML and the
-# tables and code blocks in the collapsed sections render as plain text.
-kramdown:
-  parse_block_html: true
+# NOTE: do not set `kramdown.parse_block_html: true` here. It makes kramdown try
+# to parse markdown inside block HTML, and because kramdown doesn't treat
+# <summary> as a block element it mangles <details> — the closing tags leak out
+# as literal text and the sections stop collapsing. The README uses plain
+# markdown headings instead, which render correctly on both GitHub and Pages.
