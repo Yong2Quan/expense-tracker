@@ -1,0 +1,49 @@
+---
+# Empty front matter is required — it tells Jekyll to process this file.
+---
+
+@import "{{ site.theme }}";
+
+// Recolour Cayman's header to the app's own brand gradient (mobile/src/theme.ts),
+// so the site and the app look like the same product.
+.page-header {
+  background-color: #4f46e5;
+  background-image: linear-gradient(120deg, #4f46e5, #7c3aed);
+}
+
+// Match the rounded, soft-bordered cards used throughout the app.
+.main-content {
+  img {
+    border-radius: 12px;
+  }
+
+  table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      background-color: #f5f6fa;
+    }
+  }
+
+  // Collapsed sections carry most of the setup detail; give them some presence.
+  details {
+    border: 1px solid #e6e8ef;
+    border-radius: 12px;
+    padding: 0.6rem 1rem;
+    margin-bottom: 1rem;
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: #15171c;
+    }
+
+    &[open] summary {
+      margin-bottom: 0.8rem;
+      border-bottom: 1px solid #e6e8ef;
+      padding-bottom: 0.6rem;
+    }
+  }
+}

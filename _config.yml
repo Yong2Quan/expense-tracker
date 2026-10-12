@@ -1,0 +1,23 @@
+# GitHub Pages configuration.
+#
+# Without this file, Pages renders README.md as unstyled HTML — no CSS at all.
+# Picking a theme is what turns it into something that looks like a website.
+title: Expense Tracker
+description: Know where your money goes. A Flask API and an Expo / React Native app.
+theme: jekyll-theme-cayman
+
+# The theme's "Download .zip" buttons aren't useful for an app you build locally.
+show_downloads: false
+
+# Keep the published site to just the landing page and its images. Without this,
+# Jekyll walks the whole app source (including node_modules) on every build.
+exclude:
+  - backend/
+  - mobile/
+  - LICENSE
+  - "*.ps1"
+
+# Without this, kramdown treats everything inside <details> as raw HTML and the
+# tables and code blocks in the collapsed sections render as plain text.
+kramdown:
+  parse_block_html: true
