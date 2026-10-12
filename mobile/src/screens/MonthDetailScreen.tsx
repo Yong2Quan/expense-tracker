@@ -10,6 +10,8 @@ import { useStackContentPadding } from "../hooks/useBottomSpace";
 import { filterByMonth, groupByDay, monthlySummary, monthlyTotal } from "../api/summary";
 import DonutChart, { capSlices } from "../components/DonutChart";
 import CategoryAvatar from "../components/CategoryAvatar";
+import { iconForCategory } from "../categoryIcons";
+import { gradientFrom } from "../utils/colour";
 import { EmptyState, ErrorNotice, Loading } from "../components/Status";
 import { gradients, palette, radius, shadow, spacing } from "../theme";
 import { formatDayLabel, formatMoney, formatMonthLabel, formatWeekday } from "../utils/format";
@@ -30,10 +32,14 @@ export default function MonthDetailScreen({
   const slices = capSlices(summary);
   const largest = summary[0]?.total ?? 0;
 
+  // Same dynamic colour as the dashboard, so tapping through feels continuous.
+  const headerColours = summary[0] ? gradientFrom(summary[0].colour) : gradients.detail;
+  const headerIcon = summary[0] ? iconForCategory(summary[0].name) : undefined;
+
   const Header = (
     <>
       <LinearGradient
-        colors={gradients.detail}
+        colors={headerColours}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.gradient, { paddingTop: insets.top + spacing.sm }]}
@@ -51,6 +57,16 @@ export default function MonthDetailScreen({
           <Text style={styles.navTitle}>{formatMonthLabel(month)}</Text>
           <View style={styles.backButton} />
         </View>
+
+        {headerIcon ? (
+          <MaterialCommunityIcons
+            name={headerIcon}
+            size={120}
+            color="rgba(255,255,255,0.12)"
+            style={styles.watermark}
+            pointerEvents="none"
+          />
+        ) : null}
 
         <Text style={styles.heroValue}>{formatMoney(total)}</Text>
         <Text style={styles.heroCaption}>
@@ -194,6 +210,7 @@ const styles = StyleSheet.create({
   navTitle: { color: palette.onBrand, fontSize: 17, fontWeight: "700" },
   heroValue: { color: palette.onBrand, fontSize: 44, fontWeight: "800", lineHeight: 52 },
   heroCaption: { color: palette.onBrandMuted, fontSize: 13, marginTop: spacing.xs },
+  watermark: { position: "absolute", right: -10, bottom: -18, transform: [{ rotate: "-12deg" }] },
 
   body: { padding: spacing.lg, gap: spacing.lg },
 

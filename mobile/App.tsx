@@ -19,12 +19,15 @@ import type { RootStackParamList } from "./src/navigation/types";
 
 type TabName = "Home" | "Add" | "History" | "Summary" | "Settings";
 
+// Thematic rather than generic: a wallet for the dashboard and a receipt for
+// history read as "money app" in a way that a grid and a bulleted list don't.
+// Every name here is checked against the MaterialCommunityIcons glyph map.
 const TAB_ICONS: Record<TabName, { active: IconName; inactive: IconName }> = {
-  Home: { active: "view-dashboard", inactive: "view-dashboard-outline" },
+  Home: { active: "wallet", inactive: "wallet-outline" },
   Add: { active: "plus-circle", inactive: "plus-circle-outline" },
-  History: { active: "format-list-bulleted", inactive: "format-list-bulleted" },
+  History: { active: "receipt-text", inactive: "receipt-text-outline" },
   Summary: { active: "chart-donut", inactive: "chart-donut" },
-  Settings: { active: "shape", inactive: "shape-outline" },
+  Settings: { active: "tag-multiple", inactive: "tag-multiple-outline" },
 };
 
 const navigationTheme: Theme = {
@@ -80,11 +83,33 @@ function Tabs(): React.JSX.Element {
         headerTitleStyle: { fontWeight: "700", fontSize: 18 },
       })}
     >
-      <Tab.Screen name="Home" component={HomeScreen} options={{ title: "Dashboard" }} />
-      <Tab.Screen name="Add" component={AddExpenseScreen} options={{ title: "Add Expense" }} />
-      <Tab.Screen name="History" component={HistoryScreen} options={{ title: "History" }} />
-      <Tab.Screen name="Summary" component={SummaryScreen} options={{ title: "Summary" }} />
-      <Tab.Screen name="Settings" component={SettingsScreen} options={{ title: "Categories" }} />
+      {/* `title` drives the header; `tabBarLabel` is set separately because a
+          five-tab bar gives each label ~64px, and "Add Expense" truncates. */}
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ title: "Dashboard", tabBarLabel: "Home" }}
+      />
+      <Tab.Screen
+        name="Add"
+        component={AddExpenseScreen}
+        options={{ title: "Add Expense", tabBarLabel: "Add" }}
+      />
+      <Tab.Screen
+        name="History"
+        component={HistoryScreen}
+        options={{ title: "History", tabBarLabel: "History" }}
+      />
+      <Tab.Screen
+        name="Summary"
+        component={SummaryScreen}
+        options={{ title: "Summary", tabBarLabel: "Summary" }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ title: "Categories", tabBarLabel: "Categories" }}
+      />
     </Tab.Navigator>
   );
 }

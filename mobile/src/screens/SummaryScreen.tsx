@@ -1,7 +1,6 @@
 import React from "react";
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -11,6 +10,9 @@ import { useTabContentPadding } from "../hooks/useBottomSpace";
 import { monthlySummary, monthlyTotal } from "../api/summary";
 import DonutChart, { capSlices } from "../components/DonutChart";
 import CategoryAvatar from "../components/CategoryAvatar";
+import GradientHero from "../components/GradientHero";
+import { iconForCategory } from "../categoryIcons";
+import { gradientFrom } from "../utils/colour";
 import { EmptyState, ErrorNotice, Loading } from "../components/Status";
 import { gradients, palette, radius, shadow, spacing } from "../theme";
 import { currentMonthISO, formatMoney, formatMonthLabel } from "../utils/format";
@@ -33,6 +35,10 @@ export default function SummaryScreen(): React.JSX.Element {
   // Scaled against the largest category, not the total, so small ones stay readable.
   const largest = summary[0]?.total ?? 0;
 
+  // Hero colour follows the biggest category this month.
+  const heroColours = summary[0] ? gradientFrom(summary[0].colour) : gradients.hero;
+  const heroIcon = summary[0] ? iconForCategory(summary[0].name) : undefined;
+
   const openMonth = () => navigation.navigate("MonthDetail", { month });
 
   return (
@@ -47,19 +53,16 @@ export default function SummaryScreen(): React.JSX.Element {
         accessibilityLabel={`${formatMonthLabel(month)} detail`}
         style={({ pressed }) => [styles.heroWrap, pressed && styles.pressed]}
       >
-        <LinearGradient
-          colors={gradients.hero}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.hero}
-        >
-          <Text style={styles.heroLabel}>{formatMonthLabel(month)}</Text>
-          <Text style={styles.heroValue}>{formatMoney(total)}</Text>
-          <View style={styles.heroChip}>
-            <Text style={styles.heroChipText}>See every expense</Text>
-            <MaterialCommunityIcons name="chevron-right" size={16} color={palette.onBrand} />
+        <GradientHero colours={heroColours} icon={heroIcon}>
+          <View style={styles.hero}>
+            <Text style={styles.heroLabel}>{formatMonthLabel(month)}</Text>
+            <Text style={styles.heroValue}>{formatMoney(total)}</Text>
+            <View style={styles.heroChip}>
+              <Text style={styles.heroChipText}>See every expense</Text>
+              <MaterialCommunityIcons name="chevron-right" size={16} color={palette.onBrand} />
+            </View>
           </View>
-        </LinearGradient>
+        </GradientHero>
       </Pressable>
 
       {summary.length === 0 ? (

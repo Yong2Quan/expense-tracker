@@ -1,7 +1,6 @@
 import React from "react";
 import { Pressable, RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -10,7 +9,10 @@ import { useExpenses } from "../hooks/useExpenses";
 import { useTabContentPadding } from "../hooks/useBottomSpace";
 import { averagePerActiveDay, filterByMonth, monthlySummary, monthlyTotal } from "../api/summary";
 import CategoryAvatar from "../components/CategoryAvatar";
+import GradientHero from "../components/GradientHero";
 import { EmptyState, ErrorNotice, Loading } from "../components/Status";
+import { iconForCategory } from "../categoryIcons";
+import { gradientFrom } from "../utils/colour";
 import { gradients, palette, radius, shadow, spacing } from "../theme";
 import { currentMonthISO, formatDayLabel, formatMoney, formatMonthLabel } from "../utils/format";
 import type { RootStackParamList } from "../navigation/types";
@@ -32,6 +34,12 @@ export default function HomeScreen(): React.JSX.Element {
   const topCategory = monthlySummary(expenses, month)[0];
   const recent = monthExpenses.slice(0, 5);
 
+  // The hero takes its colour from wherever most of the money went this month,
+  // so the dashboard shifts as your habits do. gradientFrom() darkens whatever
+  // it's given until white text is provably readable on it.
+  const heroColours = topCategory ? gradientFrom(topCategory.colour) : gradients.hero;
+  const heroIcon = topCategory ? iconForCategory(topCategory.name) : undefined;
+
   const openMonth = () => navigation.navigate("MonthDetail", { month });
 
   return (
@@ -40,39 +48,35 @@ export default function HomeScreen(): React.JSX.Element {
       contentContainerStyle={[styles.content, { paddingBottom: bottomPadding }]}
       refreshControl={<RefreshControl refreshing={false} onRefresh={() => void refresh()} />}
     >
-      {/* ── Hero. Tapping it opens the full month breakdown. ─────── */}
       <Pressable
         onPress={openMonth}
         accessibilityRole="button"
         accessibilityLabel={`${formatMonthLabel(month)} breakdown`}
-        style={({ pressed }) => [styles.heroWrap, pressed && styles.pressed]}
+        style={({ pressed }) => [styles.heroShadow, pressed && styles.pressed]}
       >
-        <LinearGradient
-          colors={gradients.hero}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.hero}
-        >
-          <View style={styles.heroTop}>
-            <Text style={styles.heroLabel}>{formatMonthLabel(month)}</Text>
-            <View style={styles.heroChip}>
-              <Text style={styles.heroChipText}>Breakdown</Text>
-              <MaterialCommunityIcons name="chevron-right" size={16} color={palette.onBrand} />
+        <GradientHero colours={heroColours} icon={heroIcon}>
+          <View style={styles.heroInner}>
+            <View style={styles.heroTop}>
+              <Text style={styles.heroLabel}>{formatMonthLabel(month)}</Text>
+              <View style={styles.heroChip}>
+                <Text style={styles.heroChipText}>Breakdown</Text>
+                <MaterialCommunityIcons name="chevron-right" size={16} color={palette.onBrand} />
+              </View>
             </View>
-          </View>
 
-          <Text style={styles.heroValue}>{formatMoney(total)}</Text>
-          <Text style={styles.heroCaption}>
-            {monthExpenses.length} {monthExpenses.length === 1 ? "expense" : "expenses"} this month
-          </Text>
-        </LinearGradient>
+            <Text style={styles.heroValue}>{formatMoney(total)}</Text>
+            <Text style={styles.heroCaption}>
+              {monthExpenses.length} {monthExpenses.length === 1 ? "expense" : "expenses"}
+              {topCategory ? ` · mostly ${topCategory.name}` : " this month"}
+            </Text>
+          </View>
+        </GradientHero>
       </Pressable>
 
-      {/* ── KPI row ───────────────────────────────────────────────── */}
       <View style={styles.kpiRow}>
         <View style={styles.kpiCard}>
           <View style={[styles.kpiIcon, { backgroundColor: "#EEF2FF" }]}>
-            <MaterialCommunityIcons name="calendar-today" size={18} color="#4F46E5" />
+            <MaterialCommunityIcons name="calendar-month" size={18} color="#4F46E5" />
           </View>
           <Text style={styles.kpiValue}>{formatMoney(perDay)}</Text>
           <Text style={styles.kpiLabel}>Avg / active day</Text>
@@ -80,7 +84,7 @@ export default function HomeScreen(): React.JSX.Element {
 
         <View style={styles.kpiCard}>
           <View style={[styles.kpiIcon, { backgroundColor: "#FFF5E8" }]}>
-            <MaterialCommunityIcons name="trophy-outline" size={18} color="#D97706" />
+            <MaterialCommunityIcons name="trophy-variant" size={18} color="#D97706" />
           </View>
           <Text style={styles.kpiValue} numberOfLines={1}>
             {topCategory ? topCategory.name : "—"}
@@ -91,7 +95,6 @@ export default function HomeScreen(): React.JSX.Element {
         </View>
       </View>
 
-      {/* ── Recent ────────────────────────────────────────────────── */}
       <View style={styles.sectionRow}>
         <Text style={styles.sectionHeading}>Recent</Text>
         <Pressable onPress={openMonth} hitSlop={8} accessibilityRole="button">
@@ -102,7 +105,7 @@ export default function HomeScreen(): React.JSX.Element {
       {recent.length === 0 ? (
         <View style={styles.emptyWrap}>
           <EmptyState
-            icon="receipt"
+            icon="receipt-text-outline"
             title="Nothing yet this month"
             hint="Add your first expense from the Add tab."
           />
@@ -135,10 +138,11 @@ const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: palette.background },
   content: { padding: spacing.lg, gap: spacing.lg },
 
-  heroWrap: { borderRadius: radius.xl, ...shadow },
-  pressed: { opacity: 0.9, transform: [{ scale: 0.995 }] },
-  hero: {
-    borderRadius: radius.xl,
+  // Shadow lives on the wrapper: GradientHero clips its children, which would
+  // clip the shadow too.
+  heroShadow: { borderRadius: radius.xl, ...shadow },
+  pressed: { opacity: 0.92, transform: [{ scale: 0.995 }] },
+  heroInner: {
     paddingVertical: spacing.xl,
     paddingHorizontal: spacing.lg,
     gap: spacing.xs,
@@ -160,7 +164,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 2,
-    backgroundColor: "rgba(255,255,255,0.18)",
+    backgroundColor: "rgba(255,255,255,0.2)",
     paddingLeft: spacing.md,
     paddingRight: spacing.sm,
     paddingVertical: 5,

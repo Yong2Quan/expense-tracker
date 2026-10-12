@@ -10,12 +10,19 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.14-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.14">
-  <img src="https://img.shields.io/badge/Flask-3.1-000000?style=flat-square&logo=flask&logoColor=white" alt="Flask 3.1">
-  <img src="https://img.shields.io/badge/SQLAlchemy-2.0-D71F00?style=flat-square" alt="SQLAlchemy 2.0">
-  <img src="https://img.shields.io/badge/Expo-SDK%2057-000020?style=flat-square&logo=expo&logoColor=white" alt="Expo SDK 57">
-  <img src="https://img.shields.io/badge/React%20Native-0.86-61DAFB?style=flat-square&logo=react&logoColor=black" alt="React Native 0.86">
-  <img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 6.0">
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python 3.14"></a>
+  <a href="https://flask.palletsprojects.com/"><img src="https://img.shields.io/badge/Flask-3.1-000000?style=for-the-badge&logo=flask&logoColor=white" alt="Flask 3.1"></a>
+  <a href="https://docs.sqlalchemy.org/"><img src="https://img.shields.io/badge/SQLAlchemy-2.0-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white" alt="SQLAlchemy 2.0"></a>
+  <br>
+  <a href="https://docs.expo.dev/"><img src="https://img.shields.io/badge/Expo-SDK%2057-000020?style=for-the-badge&logo=expo&logoColor=white" alt="Expo SDK 57"></a>
+  <a href="https://reactnative.dev/"><img src="https://img.shields.io/badge/React%20Native-0.86-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React Native 0.86"></a>
+  <a href="https://www.typescriptlang.org/docs/"><img src="https://img.shields.io/badge/TypeScript-6.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 6.0"></a>
+</p>
+
+<p align="center">
+  <a href="https://yong2quan.github.io/expense-tracker/"><img src="https://img.shields.io/badge/Live_page-5B4BE1?style=flat-square&logo=githubpages&logoColor=white" alt="Project page"></a>
+  <a href="https://github.com/Yong2Quan/expense-tracker"><img src="https://img.shields.io/badge/Source-181717?style=flat-square&logo=github&logoColor=white" alt="Source on GitHub"></a>
+  <a href="#-tests"><img src="https://img.shields.io/badge/tests-21_passing-1baf7a?style=flat-square&logo=pytest&logoColor=white" alt="21 tests passing"></a>
 </p>
 
 <p align="center">
@@ -34,6 +41,7 @@
 | 🍩 **Monthly breakdown** | A donut for share-at-a-glance, backed by ranked bars for the precise comparison |
 | 🗓 **Day-grouped history** | Expenses bucketed by day with a running total on every day header |
 | 🏷 **Custom categories** | Pick a colour, and the icon is chosen automatically from the name |
+| 🌈 **A background that reacts** | The dashboard's gradient is derived from your top-spending category, then darkened until white text provably clears WCAG contrast |
 | 🎨 **Accessible by design** | The category palette is validated so no two colours are hard to tell apart, including for colourblind users |
 | 📱 **Zero config on device** | The app finds your backend by itself — no IP address to type in |
 
@@ -162,9 +170,10 @@ mobile/
   src/categoryIcons.ts picks an icon from a category name, by keyword
   src/api/             client.ts (host autodetect), categories, expenses, summary
   src/hooks/           useExpenses, useBottomSpace
-  src/components/      CategoryAvatar, DonutChart, Loading / ErrorNotice / EmptyState
+  src/components/      CategoryAvatar, DonutChart, GradientHero, Loading / ErrorNotice
   src/screens/         Home, Add, History, Summary, Settings, MonthDetail
   src/utils/format.ts  money and date formatting
+  src/utils/colour.ts  derives the hero gradient, darkened until white text is readable
   src/types/           shared TypeScript interfaces
 ```
 
