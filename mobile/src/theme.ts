@@ -83,8 +83,15 @@ export const shadow = {
   elevation: 3,
 } as const;
 
-/** Nominal tab-bar height, before the device's bottom inset is added. */
-export const TAB_BAR_HEIGHT = 58;
+/**
+ * Nominal tab-bar height, before the device's bottom inset is added.
+ *
+ * 64 rather than 58: the inset is added to both the height and the bottom
+ * padding, so it buys no room for content — the icon (24) plus the label's
+ * line box needs the nominal height to be generous on its own, or the labels
+ * render clipped along the bottom edge.
+ */
+export const TAB_BAR_HEIGHT = 64;
 
 export const theme: MD3Theme = {
   ...MD3LightTheme,

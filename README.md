@@ -22,15 +22,15 @@
 <p align="center">
   <a href="https://yong2quan.github.io/expense-tracker/"><img src="https://img.shields.io/badge/Live_page-5B4BE1?style=flat-square&logo=githubpages&logoColor=white" alt="Project page"></a>
   <a href="https://github.com/Yong2Quan/expense-tracker"><img src="https://img.shields.io/badge/Source-181717?style=flat-square&logo=github&logoColor=white" alt="Source on GitHub"></a>
-  <a href="#-tests"><img src="https://img.shields.io/badge/tests-21_passing-1baf7a?style=flat-square&logo=pytest&logoColor=white" alt="21 tests passing"></a>
+  <a href="https://github.com/Yong2Quan/expense-tracker/actions/workflows/tests.yml"><img src="https://img.shields.io/github/actions/workflow/status/Yong2Quan/expense-tracker/tests.yml?branch=main&style=flat-square&logo=pytest&logoColor=white&label=tests" alt="Test suite status"></a>
 </p>
 
 <p align="center">
-  <img src="assets/preview.svg" alt="Three mockups of the app: the dashboard, the monthly breakdown with a donut chart, and the day-grouped history list." width="100%">
+  <img src="assets/preview.png" alt="Three screens of the running app: the dashboard, the monthly breakdown with a donut chart, and the day-grouped history list." width="100%">
 </p>
 
 <p align="center">
-  <sub><i>Design mockups drawn from the app's real theme tokens — not photographs of a running device.</i></sub>
+  <sub><i>Real screenshots of the running app, talking to the Flask API over a seeded sample month.</i></sub>
 </p>
 
 ## ✨ What it does
@@ -92,6 +92,11 @@ python -m pytest tests -v
 
 21 tests covering every endpoint. They run against a throwaway database in your temp
 folder, so they never touch your real `spending.db`, and no server needs to be running.
+
+The same suite runs on GitHub Actions for every push and pull request — see
+[`.github/workflows/tests.yml`](.github/workflows/tests.yml) and the
+[latest runs](https://github.com/Yong2Quan/expense-tracker/actions/workflows/tests.yml).
+The badge at the top reports that workflow's real result.
 
 ## 🏗 How it fits together
 
@@ -160,7 +165,7 @@ backend/
 
 assets/
   mascot.svg           Pob — source art for this page and the app icons
-  preview.svg          the mockups above
+  preview.png          the screenshots above
 
 mobile/
   assets/              icon.png, adaptive-icon.png, favicon.png
